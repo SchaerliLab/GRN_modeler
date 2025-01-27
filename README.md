@@ -51,7 +51,7 @@ If you plan to use a COPASI solver, additional installations are required:
 
 ## Manual
 
-A brief overview of the command-line functionalities is available in the Supplementary Information (SI) section of our [manuscript](http://t1.gstatic.com/licensed-image?q=tbn:ANd9GcS8piVHY8Mf7p62OkwcgqmZjlWI8WS58uafqox6EPKAt6OE8IWu3Aow6W-iQHJJLJ09).  
+A brief overview of the command-line functionalities is available in the Supplementary Information (SI) section of our [manuscript](https://www.biorxiv.org/content/10.1101/2024.12.18.629005v2).  
 The SI also includes a video tutorial demonstrating how to use the graphical user interface (GUI).
 
 ---
@@ -59,7 +59,7 @@ The SI also includes a video tutorial demonstrating how to use the graphical use
 ## Examples
 
 The repository contains several [example files](/examples) to help you get started. To load an example, navigate to **Input/Output > Load** within the application and select a file from the `examples` folder.  
-Simulations presented in the [manuscript](http://t1.gstatic.com/licensed-image?q=tbn:ANd9GcS8piVHY8Mf7p62OkwcgqmZjlWI8WS58uafqox6EPKAt6OE8IWu3Aow6W-iQHJJLJ09) can be found in the `analysing_examples/case_studies1` folder.
+Simulations presented in the [manuscript](https://www.biorxiv.org/content/10.1101/2024.12.18.629005v2) can be found in the `analysing_examples/case_studies1` folder.
 
 ---
 
