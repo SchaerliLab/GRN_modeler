@@ -35,7 +35,9 @@ sbioaccelerate(Mobj)
 set(sbioselect(Mobj.Species,'InitialAmount','P_N1'),'Value',90)
 
 % simulation
+tic
 [t,c,names] = run_simulation(Mobj);
+toc
 
 hf = figure;
 hold on
@@ -101,3 +103,69 @@ Ecoli.data.node_fontsize = 16;
 Ecoli.make_graph();
 axis off
 exportgraphics(gcf,'output/toggle_graph.pdf','Resolution',300)
+
+
+%% Run stochastic simulation
+
+% change the initial condition for the P_N1 protein
+set(sbioselect(Mobj.Species,'InitialAmount','P_N1'),'Value',90)
+
+
+% settings for stochastic simulations
+configset = getconfigset(Mobj);
+Mobj = convert2irrev(Mobj);
+Mobj = correct_modifiers(Mobj);
+Ecoli.set_configset(Mobj,configset)
+
+% one example simulation
+tic
+[t,c,names] = run_simulation(Mobj,'adaptivesa');
+toc
+
+hf = figure;
+hold on
+for i = 1:numel(Ecoli.data.StatesToLog)
+    plot(t,c(:,strcmp(names,Ecoli.data.StatesToLog{i})),'LineWidth',2)
+end
+xlabel('\bf\boldmath$t$ / min','interpreter','latex','Fontsize',18)
+ylabel('\bf\boldmath$c$ / molecule','interpreter','latex','Fontsize',18)
+legend(Ecoli.data.StatesToLog,'Interpreter','none')
+set(gca,'LineWidth',2,'Fontsize',16)
+!mkdir -p output
+exportgraphics(hf,'output/toggleswitch_stoch.pdf','Resolution',300)
+
+%% stochastic simulations in the function of P_N1
+% the final ratio of high/low after n simulation
+n_sim = 100;
+% number of simulations when N1 is activated
+n1_high = zeros(n,1);
+
+% run shorter simulations
+set(getconfigset(Ecoli.data.Mobj),'StopTime',1e2);
+
+% go through on the n concentration value
+tic
+for i = 1:n
+    % change the initial condition for the P_N1 protein
+    set(sbioselect(Mobj.Species,'Name','P_N1'),'InitialAmount',c_in(i))
+    % repeat the stochastic simulations
+    for j = 1:n_sim
+        [~,c,~] = run_simulation(Mobj,'adaptivesa');
+        if c(end,1) > c(end,2)
+            n1_high(i) = n1_high(i)+1;
+        end
+    end
+    % asgainst memory leakage with python
+    if rem(i,10) == 0
+        terminate(pyenv)
+        pyenv('ExecutionMode', 'OutOfProcess');
+    end
+end
+toc
+
+hf = figure;
+plot(c_in,n1_high/n_sim,'LineWidth',2)
+xlabel('\bf\boldmath$\left[\textrm{P}_{N1}\right]_0$ / molecule','interpreter','latex','Fontsize',18)
+ylabel('\bf r','interpreter','latex','Fontsize',18)
+set(gca,'LineWidth',2,'Fontsize',16)
+exportgraphics(hf,'output/toggleswitch_stoch_ratio.pdf','Resolution',300)
