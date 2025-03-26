@@ -3,6 +3,10 @@ clc
 clear
 close all
 
+% add to path
+path = strsplit(pwd,'GRN');
+addpath(genpath([path{1},'GRN']))
+
 % we evaluate the simulations only after this time / min
 start_time = 1e3;
 stop_time = 1e4;

@@ -32,7 +32,7 @@ sbioaccelerate(Mobj)
 %% Run simulation
 
 % change the initial condition for the P_N1 protein
-set(sbioselect(Mobj.Species,'InitialAmount','P_N1'),'Value',90)
+set(sbioselect(Mobj,'Name','P_N1'),'InitialAmount',90)
 
 % simulation
 tic
@@ -108,7 +108,7 @@ exportgraphics(gcf,'output/toggle_graph.pdf','Resolution',300)
 %% Run stochastic simulation
 
 % change the initial condition for the P_N1 protein
-set(sbioselect(Mobj.Species,'InitialAmount','P_N1'),'Value',90)
+set(sbioselect(Mobj.Species,'Name','P_N1'),'Value',90)
 
 
 % settings for stochastic simulations
@@ -155,7 +155,7 @@ for i = 1:n
             n1_high(i) = n1_high(i)+1;
         end
     end
-    % asgainst memory leakage with python
+    % against memory leakage with python
     if rem(i,10) == 0
         terminate(pyenv)
         pyenv('ExecutionMode', 'OutOfProcess');
