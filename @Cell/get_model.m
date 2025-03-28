@@ -40,6 +40,21 @@ delete(findUnusedComponents(Mobj));
 configsetobj_in = getconfigset(cell.data.Mobj);
 cell.set_configset(Mobj,configsetobj_in);
 
+% if we have an external model, we will add that too
+if ~isempty(cell.data.Mobj_extern)
+
+    % if we have only one compartment, we will add it to the same
+    % compartment as in our model
+    if numel(cell.data.Mobj_extern.Compartments)==1 && numel(Mobj.Compartments)==1
+        % rename the compartment
+        cell.data.Mobj_extern.Compartments.Name = Mobj.Compartments(1).Name;
+    end
+
+    % copy the external model into our model
+    cell.add_model(cell.data.Mobj_extern,Mobj);
+
+end
+
 % accelerate
 if cell.data.Accelerate==true
     sbioaccelerate(Mobj);

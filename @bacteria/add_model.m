@@ -14,8 +14,23 @@ if nargin < 4
     notes = [];
 end
 
+% if Mobj_out does not have the compartment(s) what Mobj_in has, copy them
+for i = 1:numel(Mobj_in.Compartments)
+    if isempty(sbioselect(Mobj_out.Compartments,'Name',Mobj_in.Compartments(i).Name))
+        copyobj(Mobj_in.Compartments(i),Mobj_out);
+    end
+end
+
 % species
-copy_property(Mobj_in,Mobj_out,'Species',notes)
+% the species with the new compartment were already copied, we only need to
+% copy the mutual compartment
+for i = 1:numel(Mobj_out.Compartments)
+    input_compartment = sbioselect(Mobj_in.Compartments,'Name',Mobj_out.Compartments(i).Name);
+    % if we have species with the same compartment, we copy them
+    if ~isempty(input_compartment)
+         copy_property(input_compartment,Mobj_out.Compartments(i),'Species',notes)
+    end
+end
 % parmateres
 copy_property(Mobj_in,Mobj_out,'Parameters',notes)
 % rules
@@ -51,7 +66,7 @@ end
 end
 
 function copy_property(Mobj_in,Mobj_out,property,notes)
-% copy a given property fromMobj_in to Mobj_out
+% copy a given property from Mobj_in to Mobj_out
 if ~isempty(notes) % specific notes are prescribed
     for i = 1:numel(Mobj_in.(property))
         if strcmp(Mobj_in.(property)(i).Notes,notes) && isempty(sbioselect(Mobj_out.Species,'Name',Mobj_in.(property)(i).Name))

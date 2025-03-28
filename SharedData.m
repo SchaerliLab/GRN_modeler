@@ -9,6 +9,10 @@ classdef SharedData < matlab.mixin.Copyable % copyable handle class
       % model of the whole cell
       Mobj SimBiology.Model;
 
+      % additional model what we can load separately and we can add it to
+      % our model when we export the whole model
+      Mobj_extern SimBiology.Model;
+
       % struct for the different node models
       node_models struct;
 
