@@ -36,10 +36,6 @@ end
 % delete every unused property
 delete(findUnusedComponents(Mobj));
 
-% copy the configset
-configsetobj_in = getconfigset(cell.data.Mobj);
-cell.set_configset(Mobj,configsetobj_in);
-
 % if we have an external model, we will add that too
 if ~isempty(cell.data.Mobj_extern)
 
@@ -54,6 +50,10 @@ if ~isempty(cell.data.Mobj_extern)
     cell.add_model(cell.data.Mobj_extern,Mobj);
 
 end
+
+% copy the configset
+configsetobj_in = getconfigset(cell.data.Mobj);
+cell.set_configset(Mobj,configsetobj_in);
 
 % accelerate
 if cell.data.Accelerate==true
