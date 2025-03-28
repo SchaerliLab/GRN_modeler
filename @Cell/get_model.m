@@ -37,7 +37,7 @@ end
 delete(findUnusedComponents(Mobj));
 
 % if we have an external model, we will add that too
-if ~isempty(cell.data.Mobj_extern)
+if isvalid(cell.data.Mobj_extern)
 
     % if we have only one compartment, we will add it to the same
     % compartment as in our model
