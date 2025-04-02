@@ -72,18 +72,18 @@ L2 = h*nx2;
 n_plot = 1e2;
 
 
-noise = 0.01*0;
+noise = 0.01;
 
 %% Boundary conditions
 
 % upper bounary: 'noflux', 'pbc' or 'dirichlet'
-Boundary_up = 'pbc';
+b.Boundary_up = 'pbc';
 % down bounary: 'noflux', 'pbc' or 'dirichlet'
-Boundary_down = 'pbc';
+b.Boundary_down = 'pbc';
 % left bounary: 'noflux', 'pbc' or 'dirichlet'
-Boundary_left = 'pbc';
+b.Boundary_left = 'pbc';
 % right bounary: 'noflux', 'pbc' or 'dirichlet'
-Boundary_right = 'pbc';
+b.Boundary_right = 'pbc';
 
 %% initial condition
 
@@ -109,117 +109,13 @@ for i = 1:n_species-1
 end
 clear G
 
-%% Nabla: N = Ax + Ay;
-% y direction:
-Ay = spdiags([-ones(nx1+1,1) ones(nx1+1,1)],[-1 1],nx1+1,nx1+1);
-switch Boundary_up
-    case {'noflux','dirichlet'}
-        Ay(1,:) = 0; % no flux
-    case 'pbc'
-        Ay(1,end) = -1; % pbc
-end
-switch Boundary_down
-    case {'noflux','dirichlet'}
-        Ay(end,:) = 0; % no flux
-    case 'pbc'
-        Ay(end,1) = 1; % pbc
-end
-Ay = kron(speye(nx2+1),Ay);
-switch Boundary_left
-        case 'dirichlet'
-        Ay(1:nx1+1,:) = 0;
-end
-switch Boundary_right
-        case 'dirichlet'
-        Ay(end-(nx1+1)+1:end,:) = 0;
-end
+%% building the matrices
 
-% x direction:
-Ax = spdiags([-ones((nx1+1)*(nx2+1),1)  ones((nx1+1)*(nx2+1),1)],...
-    [-(nx1+1) (nx1+1)],(nx1+1)*(nx2+1),(nx1+1)*(nx2+1));
-switch Boundary_left
-    case {'noflux','dirichlet'}
-        Ax(1:nx1+1,:) = 0; % no flux
-    case 'pbc'
-        Ax(1:nx1+1,end-(nx1+1)+1:end) = -speye(nx1+1,nx1+1); % pbc
-end
-switch Boundary_right
-    case {'noflux','dirichlet'}
-        Ax(end-(nx1+1)+1:end,:) = 0; % no flux
-    case 'pbc'
-        Ax(end-(nx1+1)+1:end,1:nx1+1) = speye(nx1+1,nx1+1); % pbc
-end
-switch Boundary_up
-    case 'dirichlet'
-        Ax(1:nx1+1:end,:) = 0;
-end
-switch Boundary_down
-    case 'dirichlet'
-        Ax(nx1+1:nx1+1:end,:) = 0;
-end
+% matrices for gradient
+[Ax,Ay] = grad_matrices(nx1,nx2,b,h);
 
-
-% with our parameters
-Ax = Ax/(2*h);
-Ay = Ay/(2*h);
-
-%% Laplace: L = Axx + Ayy;
-% y direction:
-Ayy = spdiags([ones(nx1+1,1) -2*ones(nx1+1,1) ones(nx1+1,1)],[-1 0 1],nx1+1,nx1+1);
-switch Boundary_up
-    case 'noflux'
-        Ayy(1,2) = 2; % no flux
-    case 'pbc'
-        Ayy(1,end) = 1; % pbc
-    case 'dirichlet'
-        Ayy(1,:) = 0;
-end
-switch Boundary_down
-    case 'noflux'
-        Ayy(end,end-1) = 2; % no flux
-    case 'pbc'
-        Ayy(end,1) = 1; % pbc
-    case 'dirichlet'
-        Ayy(end,:) = 0;
-end
-Ayy = kron(speye(nx2+1),Ayy);
-switch Boundary_left
-        case 'dirichlet'
-        Ayy(1:nx1+1,:) = 0;
-end
-switch Boundary_right
-        case 'dirichlet'
-        Ayy(end-(nx1+1)+1:end,:) = 0;
-end
-
-% x direction:
-Axx = spdiags([ones((nx1+1)*(nx2+1),1) -2*ones((nx1+1)*(nx2+1),1) ones((nx1+1)*(nx2+1),1)],...
-    [-(nx1+1) 0 (nx1+1)],(nx1+1)*(nx2+1),(nx1+1)*(nx2+1));
-switch Boundary_left
-    case 'noflux'
-        Axx(1:nx1+1,nx1+1+1:2*(nx1+1)) = 2*Axx(1:nx1+1,nx1+1+1:2*(nx1+1)); % no flux
-    case 'pbc'
-        Axx(1:nx1+1,end-(nx1+1)+1:end) = speye(nx1+1,nx1+1); % pbc
-    case 'dirichlet'
-        Axx(1:nx1+1,:) = 0;
-end
-switch Boundary_right
-    case 'noflux'
-        Axx(end-(nx1+1)+1:end,end-2*(nx1+1)+1:end-(nx1+1)) = ...
-            2*Axx(end-(nx1+1)+1:end,end-2*(nx1+1)+1:end-(nx1+1)); % no flux
-    case 'pbc'
-        Axx(end-(nx1+1)+1:end,1:nx1+1) = speye(nx1+1,nx1+1); % pbc
-    case 'dirichlet'
-        Axx(end-(nx1+1)+1:end,:) = 0;
-end
-switch Boundary_up
-    case 'dirichlet'
-        Axx(1:nx1+1:end,:) = 0;
-end
-switch Boundary_down
-    case 'dirichlet'
-        Axx(nx1+1:nx1+1:end,:) = 0;
-end
+% Laplace: L = Axx + Ayy;
+[Axx,Ayy] = laplace_matrices(nx1,nx2,b,h);
 
 %% Laplace ADI
 % ADI method for the diffusion of the amino acids
@@ -243,15 +139,15 @@ E = speye((nx1+1)*(nx2+1));
 for i = 1:n_diff
 
     % implicit matrix:
-    Aixx = E-D_unique(i)*dt/h^2/2*Axx;
-    Aiyy = E-D_unique(i)*dt/h^2/2*Ayy;
+    Aixx = E-D_unique(i)*dt/2*Axx;
+    Aiyy = E-D_unique(i)*dt/2*Ayy;
     % LU decomposition:
     [Lxx,Uxx] = lu(Aixx);
     [Lyy,Uyy] = lu(Aiyy);
 
     % explicit matrix:
-    Aexx = E+D_unique(i)*dt/h^2/2*Axx;
-    Aeyy = E+D_unique(i)*dt/h^2/2*Ayy;
+    Aexx = E+D_unique(i)*dt/2*Axx;
+    Aeyy = E+D_unique(i)*dt/2*Ayy;
 
     % store the matrices
     M{i,1} = Lxx;
@@ -277,7 +173,7 @@ clear Axx Ayy E Aixx Aiyy
 p = get_parameters(Mobj,'k_ext');
 
 % generate ODE function from the model
-simbio2ode(Mobj,'generated_model','range');
+removed_species = simbio2ode(Mobj,'generated_model','range');
 
 %% Reaction zone for dirichlet boundary conditions
 % if we do not have just zeros on the boundary, we should not calculate the
@@ -371,6 +267,11 @@ for i = 1:nt
    
 
    % === Reactions ===
+   % if a species is set by rules
+   if any(removed_species)
+       c_rules = generated_model_rule(i*dt, c, p, R);
+       c{removed_species}(R) = c_rules{removed_species}(R);
+   end
    dc = generated_model(i*dt, c, p, R);
    for j = 1:n_species
        c{j}(R) = c{j}(R) + dc{j}*dt;

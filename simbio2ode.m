@@ -1,4 +1,4 @@
-function [] = simbio2ode(Mobj,ODE_name,type)
+function removed_species = simbio2ode(Mobj,ODE_name,type)
 %SIMBIO2ODE create ODE function from Simbiology model
 % Mobj: Simbiology model object
 % ODE_name: name of the created ODE function
@@ -6,6 +6,8 @@ function [] = simbio2ode(Mobj,ODE_name,type)
 % type: 'cell': dc = generated_model(time, c) 
 % (dc and c are cells: c1 = c{1}, dc{1} = dc1)
 % type: 'range': c{1}(R), dc{1}(R) (reactions in a given range)
+% removed_species: logical array, if a species is set by a rule,
+% not by the ODEs, it will have a logical 1
 
 % the default is the normal version
 if nargin < 3
@@ -98,10 +100,24 @@ for i = 1:n_intern
     fprintf(fileID,['persistent k_int' int2str(i) ';\n']);
 end
 
+% changes in the rules
+if numel(model.Rules) > 0
+
+    % remove the rules which are determining a given species and create a
+    % separate function for them
+    [model,removed_species] = rule_function(model,ODE_name,type);
+
+    % reorder the rules that they can be calculated consecutively
+    rule_order = reorder_rules(model);
+else
+    % otherwise there is no removed species from the rules and ODEs
+    removed_species = false(numel(model.Species),1);
+end
+
 % print Rules
 fprintf(fileID,'\n%% Rules:\n');
 for i = 1:numel(model.Rules)
-    fprintf(fileID,vectorize([model.Rules(i).Rule ';\n']));
+    fprintf(fileID,vectorize([model.Rules(rule_order(i)).Rule ';\n']));
 end
 
 % print Fluxes
