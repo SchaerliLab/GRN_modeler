@@ -175,7 +175,8 @@ hold on
 errorbar(data(1:pos,1),data(1:pos,5),data(1:pos,6),'color',"#D95319",'LineWidth',2)
 errorbar(data(pos+1:end,1),data(pos+1:end,5),data(pos+1:end,6),'color',"#D95319",'LineWidth',2)
 set(gca,'LineWidth',2,'Fontsize',16)
-xlabel('\bf\boldmath$T$ / min','interpreter','latex','Fontsize',18)
+% xlabel('\bf\boldmath$T$ / min','interpreter','latex','Fontsize',18)
+xlabel('\bf Period of N1 / min','interpreter','latex','Fontsize',18)
 ylabel('\bf\boldmath$T_{beat}$ / min','interpreter','latex','Fontsize',18)
 legend('Theoretical','Simulated')
 exportgraphics(hf,'output/beat.pdf','Resolution',300)
@@ -184,6 +185,8 @@ exportgraphics(hf,'output/beat.pdf','Resolution',300)
 
 % change the 'PROT1' concentration
 set(sbioselect(Mobj.Species,'Name','PROT1'),'Value',164)
+
+set(get(configsetobj,'RuntimeOptions'),'StatesToLog',{'P_N1','P_N4','P_N7','protease_rate_PROT1','protease_rate_PROT2'})
 
 % simulate
 simdata = sbiosimulate(Mobj);
@@ -210,6 +213,12 @@ xline(ax1,tmax1,'--','LineWidth',2);
 ax1.Box = 'off';
 xlim(ax1,[tmin1 tmax1])
 set(ax1,'LineWidth',2,'Fontsize',16)
+ytickformat('%.1f')
+
+% gray area
+yl = ylim;       % get current y-axis limits
+fill([tmin1 tmax1 tmax1 tmin1], [yl(1) yl(1) yl(2) yl(2)], ...
+     [0.7 0.7 0.7], 'EdgeColor', 'none', 'FaceAlpha', 0.3);  % gray with transparency
 
 % Create second plot
 ax2 = axes(tlayout);
@@ -221,7 +230,6 @@ xline(ax2,tmin2,'--','LineWidth',2);
 ax2.YAxis.Visible = 'off';
 ax2.Box = 'off';
 xlim(ax2,[tmin2 tmax2])
-legend('[P_4]','[P_1]')
 set(ax2,'LineWidth',2,'Fontsize',16)
 
 % Link the axes
@@ -232,8 +240,84 @@ set(tlayout_children(end),'LineWidth',2,'Fontsize',16)
 
 xlabel(tlayout,'\bf\boldmath$t$ / min','interpreter','latex','Fontsize',18)
 ylabel(tlayout,'\bf\boldmath$c$ / molecule','interpreter','latex','Fontsize',18)
+
+% gray area
+fill([tmin2 tmax2 tmax2 tmin2], [yl(1) yl(1) yl(2) yl(2)], ...
+     [0.7 0.7 0.7], 'EdgeColor', 'none', 'FaceAlpha', 0.3);  % gray with transparency
+
+legend('[P_4]','[P_1]')
+set(gca,'ylim',yl)
+
+% add axis break
+% Create line
+annotation(gcf,'line',[0.51 0.53],...
+    [0.16 0.21],'LineWidth',2);
+
+% Create line
+annotation(gcf,'line',[0.52 0.54],...
+    [0.16 0.21],'LineWidth',2);
+
 exportgraphics(hf,'output/beat_oscillators.pdf','Resolution',300)
 
+%%
+hf = figure;
+tlayout = tiledlayout(1,2,'TileSpacing','tight');
+bgAx = axes(tlayout,'XTick',[],'YTick',[],'Box','off');
+bgAx.Layout.TileSpan = [1 2];
+ax1 = axes(tlayout);
+hold on
+plot(ax1,t,c(:,strcmp(names,'protease_rate_PROT1')),'LineWidth',2)
+plot(ax1,t,c(:,strcmp(names,'protease_rate_PROT2')),'LineWidth',2)
+xline(ax1,tmax1,'--','LineWidth',2);
+ax1.Box = 'off';
+xlim(ax1,[tmin1 tmax1])
+set(ax1,'LineWidth',2,'Fontsize',16)
+ytickformat('%.1f')
+
+% gray area
+yl = ylim;       % get current y-axis limits
+fill([tmin1 tmax1 tmax1 tmin1], [yl(1) yl(1) yl(2) yl(2)], ...
+     [0.7 0.7 0.7], 'EdgeColor', 'none', 'FaceAlpha', 0.3);  % gray with transparency
+
+% Create second plot
+ax2 = axes(tlayout);
+ax2.Layout.Tile = 2;
+hold on
+plot(ax2,t,c(:,strcmp(names,'protease_rate_PROT1')),'LineWidth',2)
+plot(ax2,t,c(:,strcmp(names,'protease_rate_PROT2')),'LineWidth',2)
+xline(ax2,tmin2,'--','LineWidth',2);
+ax2.YAxis.Visible = 'off';
+ax2.Box = 'off';
+xlim(ax2,[tmin2 tmax2])
+set(ax2,'LineWidth',2,'Fontsize',16)
+
+% Link the axes
+linkaxes([ax1 ax2], 'y')
+
+tlayout_children = get(tlayout,'children');
+set(tlayout_children(end),'LineWidth',2,'Fontsize',16)
+
+xlabel(tlayout,'\bf\boldmath$t$ / min','interpreter','latex','Fontsize',18)
+ylabel(tlayout,'\bf Protease activity\boldmath / min$^{-1}$','interpreter','latex','Fontsize',18)
+
+% gray area
+fill([tmin2 tmax2 tmax2 tmin2], [yl(1) yl(1) yl(2) yl(2)], ...
+     [0.7 0.7 0.7], 'EdgeColor', 'none', 'FaceAlpha', 0.3);  % gray with transparency
+
+legend('k_{PROT1}','k_{PROT2}')
+set(gca,'ylim',yl)
+
+% add axis break
+% Create line
+annotation(gcf,'line',[0.51 0.53],...
+    [0.16 0.21],'LineWidth',2);
+
+% Create line
+annotation(gcf,'line',[0.52 0.54],...
+    [0.16 0.21],'LineWidth',2);
+
+exportgraphics(hf,'output/beat_oscillators_PROT.pdf','Resolution',300)
+%%
 % hf = figure;
 % hold on
 % plot(t,c(:,strcmp(names,'P_N4')),'LineWidth',2)
@@ -250,6 +334,25 @@ hold on
 plot(t,c(:,strcmp(names,'P_N7')),'LineWidth',2,'Color','#EDB120')
 xlabel('\bf\boldmath$t$ / min','interpreter','latex','Fontsize',18)
 ylabel('\bf\boldmath$c$ / molecule','interpreter','latex','Fontsize',18)
-legend('[P_7]')
 set(gca,'LineWidth',2,'Fontsize',16)
+
+% gray area
+yl = ylim;       % get current y-axis limits
+fill([tmin1 tmax1 tmax1 tmin1], [yl(1) yl(1) yl(2) yl(2)], ...
+     [0.7 0.7 0.7], 'EdgeColor', 'none', 'FaceAlpha', 0.3);  % gray with transparency
+fill([tmin2 tmax2 tmax2 tmin2], [yl(1) yl(1) yl(2) yl(2)], ...
+     [0.7 0.7 0.7], 'EdgeColor', 'none', 'FaceAlpha', 0.3);  % gray with transparency
+
+% Create doublearrow
+annotation(gcf,'doublearrow',[0.35 0.673214285714286],[0.599 0.6],'LineWidth',1.5);
+
+% Create textbox
+annotation(gcf,'textbox',...
+    [0.455357142857141 0.579952383790705 0.166964281270547 0.119047616209303],...
+    'String',{'$T_{beat}$'},...
+    'FontSize',18,...
+    'EdgeColor','none','Interpreter','latex');
+
+legend('[P$_7$]','regions from ``b"','Location','northwest','interpreter','latex')
+
 exportgraphics(hf,'output/beat_output.pdf','Resolution',300)

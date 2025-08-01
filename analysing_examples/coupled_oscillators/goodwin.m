@@ -184,6 +184,14 @@ set(gca,'LineWidth',2,'Fontsize',16)
 box on
 grid off
 set(gca,'Ylim',[min(k_mats),max(k_mats)])
+
+% Create dummy patches for legend
+hold on
+h1 = patch(NaN, NaN, 'y');  % yellow
+h2 = patch(NaN, NaN, 'b');  % blue
+% Add legend
+legend([h1, h2], {'Stable fixed point', 'Oscillation'})
+
 exportgraphics(hf,'output/goodwin_stability.pdf','Resolution',300)
 
 

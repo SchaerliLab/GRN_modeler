@@ -1,4 +1,4 @@
-%% calculate the time period of Tomazou repressilator in the function of nodes
+%% calculate the time period of Elowitz repressilator in the function of nodes
 clc
 clear
 close all
@@ -92,3 +92,31 @@ zlabel('\bf\boldmath$T$ / min','interpreter','latex','Fontsize',18)
 ylabel(hc,'\bf\boldmath$T$ / min','interpreter','latex','Fontsize',18)
 set(gca,'LineWidth',2,'Fontsize',16)
 exportgraphics(gcf,'output/T_double_repressilator.pdf')
+
+%% 3D 
+figure
+% hold on
+[X,Y] = meshgrid(N2,N1);
+surf(X,Y,T)
+xticks(N2)
+yticks(N1)
+hc = colorbar;
+xlabel('\bf\boldmath\#nodes$_1$','interpreter','latex','Fontsize',18)
+ylabel('\bf\boldmath\#nodes$_2$','interpreter','latex','Fontsize',18)
+zlabel('\bf\boldmath$T$ / min','interpreter','latex','Fontsize',18)
+ylabel(hc,'\bf\boldmath$T$ / min','interpreter','latex','Fontsize',18)
+set(gca,'LineWidth',2,'Fontsize',16)
+drawnow
+exportgraphics(gcf,'output/T_double_repressilator_3D.pdf')
+
+%% plot linear functions
+
+figure
+hold on
+plot(T(:,1),'o-','LineWidth',2)
+plot(diag(T),'o-','LineWidth',2)
+set(gca,'LineWidth',2,'Fontsize',16)
+xlabel('\bf\boldmath\#nodes','interpreter','latex','Fontsize',18)
+ylabel('\bf\boldmath$T$ / min','interpreter','latex','Fontsize',18)
+legend('single repressilator','double repressilator','Location','northwest')
+exportgraphics(gcf,'output/T_double_repressilator_plot.pdf')

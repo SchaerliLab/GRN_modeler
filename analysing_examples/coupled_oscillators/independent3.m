@@ -10,18 +10,18 @@ close all
 path = strsplit(pwd,'GRN');
 addpath(genpath([path{1},'GRN']))
 
-% % weaker repression for N6-|N3
-% repression_strength = 0.0001;
+% weaker repression for N6-|N3
+repression_strength = 0.0001; % 1
 
 %% create the model (examples/coupled_mixed_not_Stricker.mat)
 
 clean_up_GRN
 Ecoli = Cell('CRISPR');
-% % we need individuel kfdsd (connection to the DNA)
-% if repression_strength ~= 1
-%     target_parameter = sbioselect(Ecoli.data.regulator_models.Repression_in.Parameters,'Name','kfdsd');
-%     target_parameter.Notes = 'Individual';
-% end
+% we need individuel kfdsd (connection to the DNA)
+if repression_strength ~= 1
+    target_parameter = sbioselect(Ecoli.data.regulator_models.Repression_in.Parameters,'Name','kfdsd');
+    target_parameter.Notes = 'Individual';
+end
 solver = 'ode15s';
 set(get(getconfigset(Ecoli.data.Mobj),'SolverOptions'),'AbsoluteTolerance',1e-8)
 set(get(getconfigset(Ecoli.data.Mobj),'SolverOptions'),'RelativeTolerance',1e-6)
@@ -60,11 +60,11 @@ Mobj = Ecoli.get_model();
 % speed up the repressilator by faster protein degradation
 set(sbioselect(Mobj.Parameters,'Name','d_P'),'Value',0.2)
 
-% % changing the repression strength
-% if repression_strength ~= 1
-%     target_parameter = sbioselect(Mobj,'Name','kfdsd_N6NOHILL|-N3');
-%     target_parameter.Value = target_parameter.Value*repression_strength;
-% end
+% changing the repression strength
+if repression_strength ~= 1
+    target_parameter = sbioselect(Mobj,'Name','kfdsd_N6NOHILL|-N3');
+    target_parameter.Value = target_parameter.Value*repression_strength;
+end
 
 % start and end of the simulation
 t_end = 1e5;
