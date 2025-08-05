@@ -94,6 +94,8 @@ set(sbioselect(Mobj.Species,'Name','PROT2'),'Value',200)
 %     parpool("Processes",n_workers);
 % end
 
+!mkdir -p output
+
 tic
 for i = 1:length(c_prot)
 
@@ -125,12 +127,52 @@ for i = 1:length(c_prot)
     % save data
     data(i,:) = [T1,err1,T4,err4];
 
+    % wavelet transform
+    if c_prot(i) == 60
+        % equidistant resampling
+        n_sample = 1e4;
+        t_cwt_end = 4*24*60;
+        newSimData = resample(simdata,linspace(0,t_cwt_end,n_sample));
+        [t,c,names] = getdata(newSimData);
+
+        % sampling frequency / Hz
+        Fs = 1/(t(2)-t(1))/60;
+
+        % create wavelet plots
+        wavelet_plot(c(:,strcmp(names,'P_N1')),Fs)
+        exportgraphics(gcf,'output/coupled_wavelet_N1.pdf','Resolution',300)
+
+        wavelet_plot(c(:,strcmp(names,'P_N4')),Fs)
+        exportgraphics(gcf,'output/coupled_wavelet_N4.pdf','Resolution',300)
+
+        % tday1 = find(t<12*60,1,'last');
+        t_sinc = find(t>3*24*60,1,'first');
+
+        % calculating the Phase Locking Value (PLV)
+        cfs1 = cwt(c(t_sinc:end,strcmp(names,'P_N1')), 'amor',Fs); % 'amor' = analytic Morlet
+        [cfs4,freqs] = cwt(c(t_sinc:end,strcmp(names,'P_N4')), 'amor',Fs); % 'amor' = analytic Morlet
+
+        % cfs1 = cwt(c(1:tday1,strcmp(names,'P_N1')), 'amor',Fs); % 'amor' = analytic Morlet
+        % [cfs4,freqs] = cwt(c(1:tday1,strcmp(names,'P_N4')), 'amor',Fs); % 'amor' = analytic Morlet
+
+        phase1 = angle(cfs1);
+        phase4 = angle(cfs4);
+
+        plv = abs(mean(exp(1i * (phase1- phase4)), 2));
+
+        figure
+        plot(freqs*1e3,plv,'LineWidth',2)
+        set(gca,'FontSize',16,'LineWidth',1.5)
+        xlabel('Frequency / mHz','FontSize',18)
+        ylabel('Phase Locking Value','FontSize',18)
+        set(gca,'YLim',[0,1])
+        exportgraphics(gcf,'output/coupled_PLV.pdf','Resolution',300)
+    end
+
 end
 toc
 
 %% plot the time period, synchronization
-
-!mkdir -p output
 
 hf = figure;
 hold on
@@ -266,3 +308,23 @@ ylabel('\bf\boldmath$\left[P_1\right]$ / mol.','interpreter','latex','Fontsize',
 set(gca,'LineWidth',2,'Fontsize',16)
 
 exportgraphics(hf,'output/synchronise_phase.pdf','Resolution',300)
+
+function [] = wavelet_plot(c,Fs)
+figure
+cwt(c, 'amor',Fs)
+set(gca,'FontSize',16,'LineWidth',1.5)
+% cb = findall(gcf, 'Type', 'ColorBar');
+cb = colorbar;
+ylabel(cb,'Magnitude','FontSize',18)
+cb.Ruler.Exponent = 0;
+cb.Ruler.TickLabelFormat = '%.0e';  % or %g for compactset(cb,'FontSize',18,'LineWidth',1.5)
+ylabel('Frequency / mHz','FontSize',18)
+xlabel('Time / days','FontSize',18)
+title ''
+
+% shring th width a little
+gcapos = get(gca,'Position'); % [left, bottom, width, height]
+gcapos(3) = 0.925*gcapos(3);
+% gcapos(4) = 0.975*gcapos(4);
+set(gca, 'Position', gcapos);
+end

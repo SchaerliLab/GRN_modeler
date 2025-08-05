@@ -356,3 +356,62 @@ annotation(gcf,'textbox',...
 legend('[P$_7$]','regions from ``b"','Location','northwest','interpreter','latex')
 
 exportgraphics(hf,'output/beat_output.pdf','Resolution',300)
+
+%% wavlet transform
+
+% equidistant resampling
+n_sample = 1e4;
+newSimData = resample(simdata,linspace(t(1),t(end),n_sample));
+[t,c,names] = getdata(newSimData);
+
+% sampling frequency / Hz
+Fs = 1/(t(2)-t(1))/60;
+
+% plot wavelet transforms 
+wavelet_plot(c(:,strcmp(names,'P_N1')),Fs)
+exportgraphics(gcf,'output/beat_wavelet_N1.pdf','Resolution',300)
+
+wavelet_plot(c(:,strcmp(names,'P_N4')),Fs)
+exportgraphics(gcf,'output/beat_wavelet_N4.pdf','Resolution',300)
+
+wavelet_plot(c(:,strcmp(names,'P_N7')),Fs)
+exportgraphics(gcf,'output/beat_wavelet_N7.pdf','Resolution',300)
+
+
+% calculating the Phase Locking Value (PLV)
+cfs1 = cwt(c(:,strcmp(names,'P_N1')), 'amor',Fs); % 'amor' = analytic Morlet
+[cfs4,freqs] = cwt(c(:,strcmp(names,'P_N4')), 'amor',Fs); % 'amor' = analytic Morlet
+
+phase1 = angle(cfs1);
+phase4 = angle(cfs4);
+
+plv = abs(mean(exp(1i * (phase1- phase4)), 2));
+
+figure
+plot(freqs*1e3,plv,'LineWidth',2)
+set(gca,'FontSize',16,'LineWidth',1.5)
+xlabel('Frequency / mHz','FontSize',18)
+ylabel('Phase Locking Value','FontSize',18)
+set(gca,'YLim',[0,1])
+exportgraphics(gcf,'output/beat_PLV.pdf','Resolution',300)
+
+
+function [] = wavelet_plot(c,Fs)
+figure
+cwt(c, 'amor',Fs)
+set(gca,'FontSize',16,'LineWidth',1.5)
+% cb = findall(gcf, 'Type', 'ColorBar');
+cb = colorbar;
+ylabel(cb,'Magnitude','FontSize',18)
+cb.Ruler.Exponent = 0;
+cb.Ruler.TickLabelFormat = '%.0e';  % or %g for compactset(cb,'FontSize',18,'LineWidth',1.5)
+ylabel('Frequency / mHz','FontSize',18)
+xlabel('Time / days','FontSize',18)
+title ''
+
+% shring th width a little
+gcapos = get(gca,'Position'); % [left, bottom, width, height]
+gcapos(3) = 0.925*gcapos(3);
+% gcapos(4) = 0.975*gcapos(4);
+set(gca, 'Position', gcapos);
+end

@@ -9,7 +9,7 @@ function [T,err,n] = calc_timeperiod(t,c,mindist)
 if nargin >= 3
     [~,locs] = findpeaks(c,'MinPeakHeight',max(c)/2,'MinPeakDistance',mindist,'MinPeakProminence',mean(c));
 else
-    [~,locs] = findpeaks(c,'MinPeakHeight',mean(c));
+    [~,locs] = findpeaks(c,'MinPeakHeight',mean(c,'omitnan'));
 end
 
 % distances between the peaks
