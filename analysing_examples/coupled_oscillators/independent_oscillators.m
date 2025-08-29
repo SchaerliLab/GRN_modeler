@@ -395,7 +395,74 @@ ylabel('Phase Locking Value','FontSize',18)
 set(gca,'YLim',[0,1])
 exportgraphics(gcf,'output/beat_PLV.pdf','Resolution',300)
 
+%% Hilbert transform
 
+T = calc_timeperiod_avr_cross(t,c(:,strcmp(names,'P_N1')));
+
+% Get the main frequency components
+fs = length(t)/t(end);  % Correct sampling rate calculation
+f0 = 1/T;               % Fundamental frequency
+bw = 0.5*f0;            % Bandwidth
+
+% Normalized frequency range for Butterworth filter
+low_cutoff = max(0, (f0 - bw/2)/(fs/2));  % Ensure cutoff > 0
+high_cutoff = min(1, (f0 + bw/2)/(fs/2)); % Ensure cutoff < 1
+
+% Design 3rd-order Butterworth bandpass filter
+[b, a] = butter(3, [low_cutoff, high_cutoff], 'bandpass');
+
+% filtering
+c1 = filtfilt(b,a,c(:,strcmp(names,'P_N1')));  % zero-phase filtering
+c4 = filtfilt(b,a,c(:,strcmp(names,'P_N4')));  % zero-phase filtering
+
+% phase calculation
+phase1 = angle(hilbert(c1));
+phase4 = angle(hilbert(c4));
+
+% phase locking value
+PLV = abs(mean(exp(1i * (phase1 - phase4))));
+fprintf('PLV = %f\n',PLV);
+
+% Instantaneous frequency
+frequency1 = diff(unwrap(phase1)) / (2*pi*mean(diff(t)));
+frequency4 = diff(unwrap(phase4)) / (2*pi*mean(diff(t)));
+
+% frequency
+figure
+hold on
+plot(t(1:end-1)/60/24,1e3*frequency1/60,'LineWidth',2)
+plot(t(1:end-1)/60/24,1e3*frequency4/60,'LineWidth',2)
+xlabel('\bf Time / days','interpreter','latex','Fontsize',18)
+ylabel('\bf Frequency / mHz','interpreter','latex','Fontsize',18)
+set(gca,'LineWidth',2,'Fontsize',16)
+ylim([0.1 0.15])
+legend('N_1','N_4')
+exportgraphics(gcf,'output/beat_hilbert_f.pdf','Resolution',300)
+
+% phase difference
+dphi = angle(exp(1i*(unwrap(phase1) - unwrap(phase4))));
+figure
+plot(t/60/24,dphi,'LineWidth',2)
+xlabel('\bf Time / days','interpreter','latex','Fontsize',18)
+ylabel('\bf\boldmath$\Delta \phi$','interpreter','latex','Fontsize',18)
+set(gca,'LineWidth',2,'Fontsize',16)
+exportgraphics(gcf,'output/beat_hilbert_dphi.pdf','Resolution',300)
+
+% Amplitude
+amplitude1 = abs(hilbert(c1));
+amplitude4 = abs(hilbert(c4));
+figure
+yyaxis left
+plot(t/60/24,amplitude1,'LineWidth',2)
+ylabel('\bf\boldmath Amplitude (N$_1$)','interpreter','latex','Fontsize',18)
+yyaxis right
+plot(t/60/24,amplitude4,'LineWidth',2)
+xlabel('\bf Time / days','interpreter','latex','Fontsize',18)
+ylabel('\bf\boldmath Amplitude (N$_4$)','interpreter','latex','Fontsize',18)
+set(gca,'LineWidth',2,'Fontsize',16)
+exportgraphics(gcf,'output/beat_hilbert_A.pdf','Resolution',300)
+
+%% Functions
 function [] = wavelet_plot(c,Fs)
 figure
 cwt(c, 'amor',Fs)

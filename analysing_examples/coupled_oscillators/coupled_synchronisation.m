@@ -10,47 +10,47 @@ addpath(genpath([path{1},'GRN']))
 
 %% create the model (examples/coupled_repressilators2.mat)
 clean_up_GRN
-app.Ecoli = Cell();
-app.Ecoli = app.Ecoli.add_node('N1','type1');
-app.Ecoli = app.Ecoli.add_node('N2','type1');
-app.Ecoli = app.Ecoli.add_node('N3','type1');
-app.Ecoli = app.Ecoli.add_node('N4','type1');
-app.Ecoli = app.Ecoli.add_node('N5','type1');
-app.Ecoli = app.Ecoli.add_node('N6','type1');
-app.Ecoli = app.Ecoli.add_regulator('Repression_in','N2','HILL','P_N1');
-app.Ecoli = app.Ecoli.add_regulator('Repression_in','N3','HILL','P_N2');
-app.Ecoli = app.Ecoli.add_regulator('Repression_in','N1','HILL','P_N3');
-app.Ecoli = app.Ecoli.add_regulator('Repression_in','N5','HILL','P_N4');
-app.Ecoli = app.Ecoli.add_regulator('Repression_in','N6','HILL','P_N5');
-app.Ecoli = app.Ecoli.add_regulator('Repression_in','N4','HILL','P_N6');
-app.Ecoli = app.Ecoli.add_protease('N1','PROT1','type1');
-app.Ecoli = app.Ecoli.add_protease('N2','PROT1','type1');
-app.Ecoli = app.Ecoli.add_protease('N3','PROT1','type1');
-app.Ecoli = app.Ecoli.add_protease('N4','PROT2','type1');
-app.Ecoli = app.Ecoli.add_protease('N5','PROT2','type1');
-app.Ecoli = app.Ecoli.add_protease('N6','PROT2','type1');
-app.Ecoli = app.Ecoli.add_protease('N2','PROT3','type1');
-app.Ecoli = app.Ecoli.add_protease('N3','PROT3','type1');
-app.Ecoli = app.Ecoli.add_protease('N5','PROT3','type1');
-app.Ecoli = app.Ecoli.add_protease('N6','PROT3','type1');
-app.Ecoli = app.Ecoli.add_protease('N1','PROT3','type1');
-app.Ecoli = app.Ecoli.add_protease('N4','PROT3','type1');
-app.Ecoli.data.Accelerate = true;
-set(get(getconfigset(app.Ecoli.data.Mobj),'SolverOptions'),'RelativeTolerance',1.000000e-08);
-set(get(getconfigset(app.Ecoli.data.Mobj),'SolverOptions'),'AbsoluteTolerance',1.000000e-10);
-set(getconfigset(app.Ecoli.data.Mobj),'Stoptime',1.000000e+04);
-app.Ecoli.data.StatesToLog = [app.Ecoli.data.StatesToLog, {'P_N1'}];
-app.Ecoli.data.StatesToLog = [app.Ecoli.data.StatesToLog, {'P_N4'}];
-set(sbioselect(app.Ecoli.data.Mobj,'Name','PROT3'),'Value',1.000000e+02);
-set(sbioselect(app.Ecoli.data.Mobj,'Name','PROT1'),'Value',1.678322e+01);
-set(sbioselect(app.Ecoli.data.Mobj,'Name','PROT2'),'Value',0.000000e+00);
-app.Ecoli.set('P_N1','InitialAmount',1.000000e+03,'N1');
-app.Ecoli.set('P_N4','InitialAmount',1.000000e+03,'N4');
+Ecoli = Cell();
+Ecoli = Ecoli.add_node('N1','type1');
+Ecoli = Ecoli.add_node('N2','type1');
+Ecoli = Ecoli.add_node('N3','type1');
+Ecoli = Ecoli.add_node('N4','type1');
+Ecoli = Ecoli.add_node('N5','type1');
+Ecoli = Ecoli.add_node('N6','type1');
+Ecoli = Ecoli.add_regulator('Repression_in','N2','HILL','P_N1');
+Ecoli = Ecoli.add_regulator('Repression_in','N3','HILL','P_N2');
+Ecoli = Ecoli.add_regulator('Repression_in','N1','HILL','P_N3');
+Ecoli = Ecoli.add_regulator('Repression_in','N5','HILL','P_N4');
+Ecoli = Ecoli.add_regulator('Repression_in','N6','HILL','P_N5');
+Ecoli = Ecoli.add_regulator('Repression_in','N4','HILL','P_N6');
+Ecoli = Ecoli.add_protease('N1','PROT1','type1');
+Ecoli = Ecoli.add_protease('N2','PROT1','type1');
+Ecoli = Ecoli.add_protease('N3','PROT1','type1');
+Ecoli = Ecoli.add_protease('N4','PROT2','type1');
+Ecoli = Ecoli.add_protease('N5','PROT2','type1');
+Ecoli = Ecoli.add_protease('N6','PROT2','type1');
+Ecoli = Ecoli.add_protease('N2','PROT3','type1');
+Ecoli = Ecoli.add_protease('N3','PROT3','type1');
+Ecoli = Ecoli.add_protease('N5','PROT3','type1');
+Ecoli = Ecoli.add_protease('N6','PROT3','type1');
+Ecoli = Ecoli.add_protease('N1','PROT3','type1');
+Ecoli = Ecoli.add_protease('N4','PROT3','type1');
+Ecoli.data.Accelerate = true;
+set(get(getconfigset(Ecoli.data.Mobj),'SolverOptions'),'RelativeTolerance',1.000000e-08);
+set(get(getconfigset(Ecoli.data.Mobj),'SolverOptions'),'AbsoluteTolerance',1.000000e-10);
+set(getconfigset(Ecoli.data.Mobj),'Stoptime',1.000000e+04);
+Ecoli.data.StatesToLog = [Ecoli.data.StatesToLog, {'P_N1'}];
+Ecoli.data.StatesToLog = [Ecoli.data.StatesToLog, {'P_N4'}];
+set(sbioselect(Ecoli.data.Mobj,'Name','PROT3'),'Value',1.000000e+02);
+set(sbioselect(Ecoli.data.Mobj,'Name','PROT1'),'Value',1.678322e+01);
+set(sbioselect(Ecoli.data.Mobj,'Name','PROT2'),'Value',0.000000e+00);
+Ecoli.set('P_N1','InitialAmount',1.000000e+03,'N1');
+Ecoli.set('P_N4','InitialAmount',1.000000e+03,'N4');
 
 %% simulation settings
 
 % get the model
-Mobj = app.Ecoli.get_model();
+Mobj = Ecoli.get_model();
 
 % start and end of the simulation
 t_end = 2e4;
@@ -140,9 +140,11 @@ for i = 1:length(c_prot)
 
         % create wavelet plots
         wavelet_plot(c(:,strcmp(names,'P_N1')),Fs)
+        yticks([0.01,0.1,1,10])
         exportgraphics(gcf,'output/coupled_wavelet_N1.pdf','Resolution',300)
 
         wavelet_plot(c(:,strcmp(names,'P_N4')),Fs)
+        yticks([0.01,0.1,1,10])
         exportgraphics(gcf,'output/coupled_wavelet_N4.pdf','Resolution',300)
 
         % tday1 = find(t<12*60,1,'last');
@@ -167,6 +169,74 @@ for i = 1:length(c_prot)
         ylabel('Phase Locking Value','FontSize',18)
         set(gca,'YLim',[0,1])
         exportgraphics(gcf,'output/coupled_PLV.pdf','Resolution',300)
+
+        
+        % === Hilbert transform ===
+        T = calc_timeperiod_avr_cross(t,c(:,strcmp(names,'P_N1')));
+
+        % Get the main frequency components
+        fs = length(t)/t(end);  % Correct sampling rate calculation
+        f0 = 1/T;               % Fundamental frequency
+        bw = 0.5*f0;            % Bandwidth
+
+        % Normalized frequency range for Butterworth filter
+        low_cutoff = max(0, (f0 - bw/2)/(fs/2));  % Ensure cutoff > 0
+        high_cutoff = min(1, (f0 + bw/2)/(fs/2)); % Ensure cutoff < 1
+
+        % Design 3rd-order Butterworth bandpass filter
+        [b, a] = butter(3, [low_cutoff, high_cutoff], 'bandpass');
+
+        % filtering
+        c1 = filtfilt(b,a,c(:,strcmp(names,'P_N1')));  % zero-phase filtering
+        c4 = filtfilt(b,a,c(:,strcmp(names,'P_N4')));  % zero-phase filtering
+
+        % phase calculation2
+        phase1 = angle(hilbert(c1));
+        phase4 = angle(hilbert(c4));
+
+        % phase locking value
+        PLV = abs(mean(exp(1i * (phase1(t_sinc:end)- phase4(t_sinc:end)))));
+        fprintf('PLV = %f\n',PLV);
+
+        % Instantaneous frequency
+        frequency1 = diff(unwrap(phase1)) / (2*pi*mean(diff(t)));
+        frequency4 = diff(unwrap(phase4)) / (2*pi*mean(diff(t))); 
+
+        % frequency
+        figure
+        hold on
+        plot(t(1:end-1)/60/24,1e3*frequency1/60,'LineWidth',2)
+        plot(t(1:end-1)/60/24,1e3*frequency4/60,'LineWidth',2)
+        xlabel('\bf Time / days','interpreter','latex','Fontsize',18)
+        ylabel('\bf Frequency / mHz','interpreter','latex','Fontsize',18)
+        set(gca,'LineWidth',2,'Fontsize',16)
+        ylim([0.1 0.15])
+        legend('N_1','N_4')
+        exportgraphics(gcf,'output/coupled_f.pdf','Resolution',300)
+
+        % phase difference
+        dphi = angle(exp(1i*(unwrap(phase1) - unwrap(phase4))));
+        figure
+        plot(t/60/24,dphi,'LineWidth',2)
+        xlabel('\bf Time / days','interpreter','latex','Fontsize',18)
+        ylabel('\bf\boldmath$\Delta \phi$','interpreter','latex','Fontsize',18)
+        set(gca,'LineWidth',2,'Fontsize',16)
+        exportgraphics(gcf,'output/coupled_dphi.pdf','Resolution',300)
+
+        % Amplitude
+        amplitude1 = abs(hilbert(c1));
+        amplitude4 = abs(hilbert(c4));
+        figure
+        yyaxis left
+        plot(t/60/24,amplitude1,'LineWidth',2)
+        ylabel('\bf\boldmath Amplitude (N$_1$)','interpreter','latex','Fontsize',18)
+        yyaxis right
+        plot(t/60/24,amplitude4,'LineWidth',2)
+        xlabel('\bf Time / days','interpreter','latex','Fontsize',18)
+        ylabel('\bf\boldmath Amplitude (N$_4$)','interpreter','latex','Fontsize',18)
+        set(gca,'LineWidth',2,'Fontsize',16)
+        exportgraphics(gcf,'output/coupled_A.pdf','Resolution',300)
+
     end
 
 end
