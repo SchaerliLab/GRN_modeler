@@ -12,50 +12,50 @@ addpath(genpath([path{1},'GRN']))
 %% create protease oscillator model (exapmles/protease_oscillator.mat)
 
 clean_up_GRN
-app.Ecoli = Cell('Tomazou');
-app.Ecoli = app.Ecoli.add_node('N1','type1');
-app.Ecoli = app.Ecoli.add_regulator('Repression_in','N1','HILL','P_N1');
-app.Ecoli = app.Ecoli.add_protease('N1','PROT1','type1');
-app.Ecoli.set('PROT1','InitialAmount',5.000000e+01,'PROT1');
-set(getconfigset(app.Ecoli.data.Mobj),'Stoptime',1e2);
-set(get(getconfigset(app.Ecoli.data.Mobj),'SolverOptions'),'AbsoluteTolerance',1e-10);
-set(get(getconfigset(app.Ecoli.data.Mobj),'SolverOptions'),'RelativeTolerance',1e-8);
-app.Ecoli.data.StatesToLog = [app.Ecoli.data.StatesToLog, {'uP_N1'}];
-app.Ecoli.data.StatesToLog = [app.Ecoli.data.StatesToLog, {'P_N1'}];
-app.Ecoli.data.StatesToLog = [app.Ecoli.data.StatesToLog, {'mRNA_N1'}];
-app.Ecoli.data.StatesToLog(strcmp(app.Ecoli.data.StatesToLog,'mRNA_N1')) = [];
-app.Ecoli.data.StatesToLog(strcmp(app.Ecoli.data.StatesToLog,'uP_N1')) = [];
-app.Ecoli.data.StatesToLog(strcmp(app.Ecoli.data.StatesToLog,'P_N1')) = [];
-app.Ecoli.data.StatesToLog = [app.Ecoli.data.StatesToLog, {'mRNA_N1'}];
-app.Ecoli.data.StatesToLog = [app.Ecoli.data.StatesToLog, {'uP_N1'}];
-app.Ecoli.data.StatesToLog = [app.Ecoli.data.StatesToLog, {'P_N1'}];
+Ecoli = Cell('Tomazou');
+Ecoli = Ecoli.add_node('N1','type1');
+Ecoli = Ecoli.add_regulator('Repression_in','N1','HILL','P_N1');
+Ecoli = Ecoli.add_protease('N1','PROT1','type1');
+Ecoli.set('PROT1','InitialAmount',5.000000e+01,'PROT1');
+set(getconfigset(Ecoli.data.Mobj),'Stoptime',1e2);
+set(get(getconfigset(Ecoli.data.Mobj),'SolverOptions'),'AbsoluteTolerance',1e-10);
+set(get(getconfigset(Ecoli.data.Mobj),'SolverOptions'),'RelativeTolerance',1e-8);
+Ecoli.data.StatesToLog = [Ecoli.data.StatesToLog, {'uP_N1'}];
+Ecoli.data.StatesToLog = [Ecoli.data.StatesToLog, {'P_N1'}];
+Ecoli.data.StatesToLog = [Ecoli.data.StatesToLog, {'mRNA_N1'}];
+Ecoli.data.StatesToLog(strcmp(Ecoli.data.StatesToLog,'mRNA_N1')) = [];
+Ecoli.data.StatesToLog(strcmp(Ecoli.data.StatesToLog,'uP_N1')) = [];
+Ecoli.data.StatesToLog(strcmp(Ecoli.data.StatesToLog,'P_N1')) = [];
+Ecoli.data.StatesToLog = [Ecoli.data.StatesToLog, {'mRNA_N1'}];
+Ecoli.data.StatesToLog = [Ecoli.data.StatesToLog, {'uP_N1'}];
+Ecoli.data.StatesToLog = [Ecoli.data.StatesToLog, {'P_N1'}];
 
 % get the model
-Mobj_prot = app.Ecoli.get_model();
+Mobj_prot = Ecoli.get_model();
 save 'protease_oscillator_model' Mobj_prot
 clear Mobj_prot
 
 %% create the model (examples/togglelator.mat)
 
 clean_up_GRN
-app.Ecoli = Cell();
-app.Ecoli = app.Ecoli.add_node('N1','type1');
-app.Ecoli = app.Ecoli.add_node('N2','type1');
-app.Ecoli = app.Ecoli.add_regulator('Repression_in','N2','HILL','P_N1');
-app.Ecoli = app.Ecoli.add_regulator('Repression_in','N1','HILL','P_N2');
-app.Ecoli = app.Ecoli.add_protease('N1','PROT1','type1');
-app.Ecoli = app.Ecoli.add_protease('N2','PROT1','type1');
-app.Ecoli.set('P_N2','InitialAmount',1.000000e+02,'N2');
-app.Ecoli.set('uP_N2','InitialAmount',1.000000e+01,'N2');
-app.Ecoli.data.StatesToLog = [app.Ecoli.data.StatesToLog, {'P_N1'}];
-app.Ecoli.data.StatesToLog = [app.Ecoli.data.StatesToLog, {'P_N2'}];
-set(getconfigset(app.Ecoli.data.Mobj),'Stoptime',1e3);
-set(getconfigset(app.Ecoli.data.Mobj),'Stoptime',1e2);
+Ecoli = Cell();
+Ecoli = Ecoli.add_node('N1','type1');
+Ecoli = Ecoli.add_node('N2','type1');
+Ecoli = Ecoli.add_regulator('Repression_in','N2','HILL','P_N1');
+Ecoli = Ecoli.add_regulator('Repression_in','N1','HILL','P_N2');
+Ecoli = Ecoli.add_protease('N1','PROT1','type1');
+Ecoli = Ecoli.add_protease('N2','PROT1','type1');
+Ecoli.set('P_N2','InitialAmount',1.000000e+02,'N2');
+Ecoli.set('uP_N2','InitialAmount',1.000000e+01,'N2');
+Ecoli.data.StatesToLog = [Ecoli.data.StatesToLog, {'P_N1'}];
+Ecoli.data.StatesToLog = [Ecoli.data.StatesToLog, {'P_N2'}];
+set(getconfigset(Ecoli.data.Mobj),'Stoptime',1e3);
+set(getconfigset(Ecoli.data.Mobj),'Stoptime',1e2);
 
 %% find fix points
 
 % get the model
-Mobj = app.Ecoli.get_model();
+Mobj = Ecoli.get_model();
 
 % Unstable Supercritical Hopf Bifurcation
 
