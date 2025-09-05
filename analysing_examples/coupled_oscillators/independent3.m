@@ -1,6 +1,6 @@
 %% independent oscillators
 % interaction between an independent Stricker oscillator and an independent
-% CRISPRlator through a not gate, FM
+% CRISPRlator through a not gate, AM
 
 clc
 clear
