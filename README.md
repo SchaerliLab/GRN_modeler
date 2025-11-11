@@ -6,8 +6,8 @@ Welcome to **GRN_Modeler**, an application built on MATLAB SimBiology for constr
 
 ## Reference
 
-**GRN_modeler: An Intuitive Tool for Constructing and Evaluating Gene Regulatory Networks and its Applications to Oscillators and a Light Biosensor**  
-DOI: [10.1101/2024.12.18.629005 ](https://www.biorxiv.org/content/10.1101/2024.12.18.629005v2)
+**A tool for modeling gene regulatory networks (GRN_modeler) and its applications to synthetic biology**  
+DOI: [10.1038/s44320-025-00148-8](https://doi.org/10.1038/s44320-025-00148-8)
 
 ---
 
