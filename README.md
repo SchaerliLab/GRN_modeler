@@ -7,7 +7,11 @@ Welcome to **GRN_Modeler**, an application built on MATLAB SimBiology for constr
 ## Reference
 
 **A tool for modeling gene regulatory networks (GRN_modeler) and its applications to synthetic biology**  
-DOI: [10.1038/s44320-025-00148-8](https://doi.org/10.1038/s44320-025-00148-8)
+DOI: [10.1038/s44320-025-00148-8](https://doi.org/10.1038/s44320-025-00148-8)   
+
+## 🎥 Video Tutorial
+
+A step-by-step **video tutorial series** is available on [YouTube](https://www.youtube.com/playlist?list=PLFPyKNhX_MmLEtFWHCCBPgmBi8XXGD3z1).
 
 ---
 
